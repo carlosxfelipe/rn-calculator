@@ -1,7 +1,17 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
+
+enum Operator {
+  add = '+',
+  subtract = '-',
+  multiply = 'x',
+  divide = '÷',
+}
 
 export const useCalculator = () => {
   const [displayValue, setDisplayValue] = useState('0');
+  const [previousValue, setPreviousValue] = useState('0');
+
+  const lastOperation = useRef<Operator>();
 
   const buildNumber = (newValue: string) => {
     // Previne adição de um ponto decimal se já houver um no displayValue
@@ -49,6 +59,7 @@ export const useCalculator = () => {
 
   const clean = () => {
     setDisplayValue('0');
+    setPreviousValue('0');
   };
 
   const deleteLastNumber = () => {
@@ -71,14 +82,49 @@ export const useCalculator = () => {
     setDisplayValue(newValue);
   };
 
+  const setLastValue = () => {
+    if (displayValue.endsWith('.')) {
+      setPreviousValue(displayValue.slice(0, -1));
+    } else {
+      setPreviousValue(displayValue);
+    }
+
+    setDisplayValue('0');
+  };
+
+  const divisionOperation = () => {
+    setLastValue();
+    lastOperation.current = Operator.divide;
+  };
+
+  const multiplicationOperation = () => {
+    setLastValue();
+    lastOperation.current = Operator.multiply;
+  };
+
+  const subtractionOperation = () => {
+    setLastValue();
+    lastOperation.current = Operator.subtract;
+  };
+
+  const additionOperation = () => {
+    setLastValue();
+    lastOperation.current = Operator.add;
+  };
+
   return {
     // Properties
     displayValue,
+    previousValue,
 
     // Methods
     buildNumber,
     toggleSign,
     clean,
     deleteLastNumber,
+    divisionOperation,
+    multiplicationOperation,
+    subtractionOperation,
+    additionOperation,
   };
 };
