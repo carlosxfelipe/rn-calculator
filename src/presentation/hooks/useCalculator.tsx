@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 enum Operator {
   add = '+',
@@ -8,10 +8,26 @@ enum Operator {
 }
 
 export const useCalculator = () => {
+  const [formula, setFormula] = useState('');
+
   const [displayValue, setDisplayValue] = useState('0');
   const [previousValue, setPreviousValue] = useState('0');
 
   const lastOperation = useRef<Operator>();
+
+  useEffect(() => {
+    if (lastOperation.current) {
+      const firstPart = formula.split(' ').at(0);
+      setFormula(`${firstPart} ${lastOperation.current} ${displayValue}`);
+    } else {
+      setFormula(displayValue);
+    }
+  }, [displayValue]);
+
+  useEffect(() => {
+    const subResult = calculateSubResult();
+    setPreviousValue(`${subResult}`);
+  }, [formula]);
 
   const buildNumber = (newValue: string) => {
     // Previne adição de um ponto decimal se já houver um no displayValue
@@ -60,6 +76,8 @@ export const useCalculator = () => {
   const clean = () => {
     setDisplayValue('0');
     setPreviousValue('0');
+    lastOperation.current = undefined;
+    setFormula('');
   };
 
   const deleteLastNumber = () => {
@@ -83,6 +101,8 @@ export const useCalculator = () => {
   };
 
   const setLastValue = () => {
+    calculateResult();
+
     if (displayValue.endsWith('.')) {
       setPreviousValue(displayValue.slice(0, -1));
     } else {
@@ -112,29 +132,37 @@ export const useCalculator = () => {
     lastOperation.current = Operator.add;
   };
 
-  const calculateResult = () => {
-    const num1 = Number(displayValue);
+  const calculateSubResult = (): number => {
+    const [firstValue, operation, secondValor] = formula.split(' ');
+    const num1 = Number(firstValue);
+    const num2 = Number(secondValor);
 
-    const num2 = Number(previousValue);
-
-    switch (lastOperation.current) {
-      case Operator.add:
-        setDisplayValue(`${num1 + num2}`);
-        break;
-
-      case Operator.subtract:
-        setDisplayValue(`${num2 - num1}`);
-        break;
-
-      case Operator.multiply:
-        setDisplayValue(`${num1 * num2}`);
-        break;
-
-      case Operator.divide:
-        setDisplayValue(`${num2 / num1}`);
-        break;
+    if (isNaN(num2)) {
+      return num1;
     }
 
+    switch (operation) {
+      case Operator.add:
+        return num1 + num2;
+
+      case Operator.subtract:
+        return num1 - num2;
+
+      case Operator.multiply:
+        return num1 * num2;
+
+      case Operator.divide:
+        return num1 / num2;
+      default:
+        return 0;
+    }
+  };
+
+  const calculateResult = () => {
+    const result = calculateSubResult();
+    setFormula(`${result}`);
+
+    lastOperation.current = undefined;
     setPreviousValue('0');
   };
 
@@ -142,6 +170,7 @@ export const useCalculator = () => {
     // Properties
     displayValue,
     previousValue,
+    formula,
 
     // Methods
     buildNumber,
@@ -153,5 +182,6 @@ export const useCalculator = () => {
     subtractionOperation,
     additionOperation,
     calculateResult,
+    calculateSubResult,
   };
 };

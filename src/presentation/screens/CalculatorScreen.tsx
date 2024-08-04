@@ -7,7 +7,6 @@ import {useCalculator} from '../hooks/useCalculator';
 
 export const CalculatorScreen = (): JSX.Element => {
   const {
-    displayValue,
     previousValue,
     buildNumber,
     toggleSign,
@@ -18,17 +17,20 @@ export const CalculatorScreen = (): JSX.Element => {
     subtractionOperation,
     additionOperation,
     calculateResult,
+    formula,
   } = useCalculator();
 
   return (
     <View style={styles.calculatorContainer}>
       <View style={{paddingHorizontal: 30, paddingBottom: 20}}>
         <Text adjustsFontSizeToFit numberOfLines={1} style={styles.mainResult}>
-          {displayValue}
+          {formula}
         </Text>
-        <Text adjustsFontSizeToFit numberOfLines={1} style={styles.subResult}>
-          {previousValue === '0' ? ' ' : previousValue}
-        </Text>
+        {formula !== previousValue && (
+          <Text adjustsFontSizeToFit numberOfLines={1} style={styles.subResult}>
+            {previousValue}
+          </Text>
+        )}
       </View>
       <View style={styles.row}>
         <CalculatorButton
