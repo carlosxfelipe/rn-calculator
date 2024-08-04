@@ -112,6 +112,32 @@ export const useCalculator = () => {
     lastOperation.current = Operator.add;
   };
 
+  const calculateResult = () => {
+    const num1 = Number(displayValue);
+
+    const num2 = Number(previousValue);
+
+    switch (lastOperation.current) {
+      case Operator.add:
+        setDisplayValue(`${num1 + num2}`);
+        break;
+
+      case Operator.subtract:
+        setDisplayValue(`${num2 - num1}`);
+        break;
+
+      case Operator.multiply:
+        setDisplayValue(`${num1 * num2}`);
+        break;
+
+      case Operator.divide:
+        setDisplayValue(`${num2 / num1}`);
+        break;
+    }
+
+    setPreviousValue('0');
+  };
+
   return {
     // Properties
     displayValue,
@@ -126,5 +152,6 @@ export const useCalculator = () => {
     multiplicationOperation,
     subtractionOperation,
     additionOperation,
+    calculateResult,
   };
 };

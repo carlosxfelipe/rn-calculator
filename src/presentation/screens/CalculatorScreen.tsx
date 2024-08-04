@@ -17,6 +17,7 @@ export const CalculatorScreen = (): JSX.Element => {
     multiplicationOperation,
     subtractionOperation,
     additionOperation,
+    calculateResult,
   } = useCalculator();
 
   return (
@@ -92,7 +93,7 @@ export const CalculatorScreen = (): JSX.Element => {
         />
         <CalculatorButton onPress={() => buildNumber('.')} label="." />
         <CalculatorButton
-          onPress={() => console.log('=')}
+          onPress={calculateResult}
           label="="
           color={colors.orange}
         />
