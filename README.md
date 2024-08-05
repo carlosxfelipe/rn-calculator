@@ -29,6 +29,10 @@ A calculadora foi inspirada na calculadora do iOS e é uma aplicação simples q
 
    `npm install`
 
-3. Execute a aplicação no simulador iOS:
+3. Configure o seu dispositivo no arquivo package.json, substituindo em scripts, ios:simulator, pelo seu dispositivo:
+
+   `xcrun simctl list devices`
+
+4. Execute a aplicação no simulador iOS:
 
    `npm run ios:simulator`
